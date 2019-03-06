@@ -11,6 +11,7 @@ class TestSolver(unittest.TestCase):
         end = rubik.I
         ans = solver.shortest_path(start, end)
         self.assertEqual(len(ans), 0)
+        print("Test 1 Pass")
 
     def testShortestPath1(self):
         """Length 1 path."""
@@ -19,6 +20,7 @@ class TestSolver(unittest.TestCase):
         ans = solver.shortest_path(start, end)
         self.assertEqual(len(ans), 1)
         self.assertEqual(ans, [rubik.F])
+        print("Test 2 Pass")
 
     def testShortestPath2(self):
         """Length 2 path."""
@@ -28,6 +30,7 @@ class TestSolver(unittest.TestCase):
         ans = solver.shortest_path(start, end)
         self.assertEqual(len(ans), 2)
         self.assertEqual(ans, [rubik.F, rubik.L])
+        print("Test 3 Pass")
 
     def testShortestPath3(self):
         """Length 3 path."""
@@ -38,6 +41,7 @@ class TestSolver(unittest.TestCase):
         ans = solver.shortest_path(start, end)
         self.assertEqual(len(ans), 3)
         self.assertGoodPath(start, end, ans)
+        print("Test 4 Pass")
 
     def testShortestPath4(self):
         """Length 4 path."""
@@ -49,6 +53,7 @@ class TestSolver(unittest.TestCase):
         ans = solver.shortest_path(start, end)
         self.assertEqual(len(ans), 4)
         self.assertGoodPath(start, end, ans)
+        print("Test 5 Pass")
 
     def testshortestPath14(self):
         """Length 14 path."""
@@ -57,6 +62,7 @@ class TestSolver(unittest.TestCase):
         ans = solver.shortest_path(start, end)
         self.assertEqual(len(ans), 14)
         self.assertGoodPath(start, end, ans)
+        print("Test 6 Pass")
 
     def testshortestPathBad(self):
         """No solution."""
@@ -64,6 +70,7 @@ class TestSolver(unittest.TestCase):
         end = rubik.I
         ans = solver.shortest_path(start, end)
         self.assertEqual(ans, None)
+        print("Test 7 Pass")
 
     def assertGoodPath(self, start, end, path):
         current = start
