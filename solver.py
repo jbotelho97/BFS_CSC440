@@ -12,29 +12,35 @@ def shortest_path(start, end):
     Each move can be applied using rubik.perm_apply
     """
 
+    #Set of moves the rubik's cube can make
     moves = [rubik.F, rubik.Fi, rubik.L, rubik.Li,  rubik.U, rubik.Ui]
 
+    #Depth of search
     depth = 1
 
-    startQ = [start]
-    endQ = [end]
-    visit = []
-    heapq.heappush(visit, start)
+    startQ = [start] #Holds the starting values we make the frontier from
+    endQ = [end] #Holds the ending values we compare the frontier to
+    visit = [] #Holds all positions we have already visited
+    heapq.heappush(visit, start) #adds start and end to the visited heap
     heapq.heappush(visit, end)
-    path = {start: None}
-    pathE = {end: None}
-    fromStart = True
+    path = {start: None} #Hold the paths from the node to the start position
+    pathE = {end: None} #Holds the paths from the node to the end position
+    fromStart = True #True if we are oriendted from the start position
 
-
+    #true if cube is already solved
     if start == end:
         return []
 
+    #While there exists a list of values to test we will continue to generate the frontier to
+    # compare to the end points
+    #Termination: When startQ no longer exists we know there is no end points to compare to so
+    # we have reached the point where no solution is possible
     while startQ:
 
         nextQ = []
 
         depth += 1
-        if depth >= 14:
+        if depth >= 14: #if we go beyond what is the shortest path, terminate
             break
 
         for i in range(len(startQ)):
@@ -57,13 +63,13 @@ def shortest_path(start, end):
                             tPath = []
                             if path.get(startQ[i]) != None:
                                 tPath = path.get(startQ[i])
-
                             tPath.append(moves[j])
                             sPath = []
                             if pathE.get(endQ[k]) != None:
                                 sPath = pathE.get(endQ[k])
                             q = len(sPath) - 1
                             while(q >= 0):
+                                # tPath.append(perm_inverse(sPath[q]))
                                 tPath.append(perm_inverse(sPath[q]))
                                 q -= 1
                             return tPath
@@ -71,6 +77,8 @@ def shortest_path(start, end):
                             tPath = []
                             if path.get(endQ[k]) != None:
                                 tPath = path.get(endQ[k])
+                            # move = applyMove(j, startQ[i])
+                            # tPath.append(move)
                             tPath.append(perm_inverse(moves[j]))
                             sPath = []
                             if pathE.get(startQ[i]) != None:
@@ -88,16 +96,14 @@ def shortest_path(start, end):
                         tPath = []
                         if path.get(startQ[i]) != None:
                             tPath = path.get(startQ[i])
-                        # tPath.append(moves[j])
-                        tPath.append(adjList[j])
+                        tPath.append(moves[j])
                         nuPath = {adjList[j]: tPath}
                         path.update(nuPath)
                     else:
                         tPath = []
                         if path.get(startQ[i]) != None:
                             tPath = pathE.get(startQ[i])
-                        # tPath.append(moves[j])
-                        tPath.append(adjList[j])
+                        tPath.append(moves[j])
                         nuPath = {adjList[j]: tPath}
                         pathE.update(nuPath)
 
