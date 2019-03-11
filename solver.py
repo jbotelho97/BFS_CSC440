@@ -57,24 +57,30 @@ def shortest_path(start, end):
                             tPath = []
                             if path.get(startQ[i]) != None:
                                 tPath = path.get(startQ[i])
+
                             tPath.append(moves[j])
                             sPath = []
                             if pathE.get(endQ[k]) != None:
                                 sPath = pathE.get(endQ[k])
-                            for q in range(len(sPath) - 1, 0, -1):
+                            q = len(sPath) - 1
+                            while(q >= 0):
                                 tPath.append(perm_inverse(sPath[q]))
+                                q -= 1
                             return tPath
                         else:
                             tPath = []
-                            if path.get(startQ[i]) != None:
+                            if path.get(endQ[k]) != None:
                                 tPath = path.get(endQ[k])
                             tPath.append(perm_inverse(moves[j]))
                             sPath = []
                             if pathE.get(startQ[i]) != None:
                                 sPath = pathE.get(startQ[i])
-                            for q in range(len(sPath) - 1, 0, -1):
+                            q = len(sPath) - 1
+                            while q >= 0:
                                 tPath.append(perm_inverse(sPath[q]))
+                                q -= 1
                             return tPath
+                #increasing path
                 if adjList[j] not in visit:
                     heapq.heappush(visit, adjList[j])
                     heapq.heappush(nextQ, adjList[j])
@@ -82,14 +88,16 @@ def shortest_path(start, end):
                         tPath = []
                         if path.get(startQ[i]) != None:
                             tPath = path.get(startQ[i])
-                        tPath.append(moves[j])
+                        # tPath.append(moves[j])
+                        tPath.append(adjList[j])
                         nuPath = {adjList[j]: tPath}
                         path.update(nuPath)
                     else:
                         tPath = []
                         if path.get(startQ[i]) != None:
                             tPath = pathE.get(startQ[i])
-                        tPath.append(moves[j])
+                        # tPath.append(moves[j])
+                        tPath.append(adjList[j])
                         nuPath = {adjList[j]: tPath}
                         pathE.update(nuPath)
 
@@ -105,7 +113,9 @@ def shortest_path(start, end):
 
     return
 
-
+def applyMove(move, pos):
+    moves = [rubik.F, rubik.Fi, rubik.L, rubik.Li, rubik.U, rubik.Ui]
+    return perm_apply(moves[move], pos)
 
 
 
@@ -139,5 +149,4 @@ def genAdj(start):
     list.append(perm_apply(rubik.Ui, start))
 
     return list
-
 
