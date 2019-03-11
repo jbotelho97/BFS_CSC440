@@ -1,4 +1,4 @@
-from rubik import perm_apply
+from rubik import perm_apply, perm_inverse
 import rubik
 import heapq
 
@@ -22,6 +22,9 @@ def shortest_path(start, end):
     heapq.heappush(visit, start)
     heapq.heappush(visit, end)
     path = {start: None}
+    pathE = {end: None}
+    fromStart = True
+
 
     if start == end:
         return []
@@ -39,29 +42,66 @@ def shortest_path(start, end):
             adjList = genAdj(startQ[i])
 
             #j - 0=F, 1=Fi, 2=L, 3=Li, 4=U, 5=Ui
+            #j is the specific move done to the cube
             for j in range(len(adjList)):
-                if adjList[j] in endQ:
-                    tPath = []
-                    if path.get(startQ[i]) != None:
-                        tPath = path.get(adjList[j])
-                    tPath.append(moves[j])
-                    return tPath
+                # if adjList[j] in endQ:
+                #     tPath = []
+                #     if path.get(startQ[i]) != None:
+                #         tPath = path.get(adjList[j])
+                #     tPath.append(moves[j])
+                #     return tPath
+                for k in range(len(endQ)):
+                    #merging
+                    if adjList[j] == endQ[k]:
+                        if fromStart:
+                            tPath = []
+                            if path.get(startQ[i]) != None:
+                                tPath = path.get(startQ[i])
+                            tPath.append(moves[j])
+                            sPath = []
+                            if pathE.get(endQ[k]) != None:
+                                sPath = pathE.get(endQ[k])
+                            for q in range(len(sPath) - 1, 0, -1):
+                                tPath.append(perm_inverse(sPath[q]))
+                            return tPath
+                        else:
+                            tPath = []
+                            if path.get(startQ[i]) != None:
+                                tPath = path.get(endQ[k])
+                            tPath.append(perm_inverse(moves[j]))
+                            sPath = []
+                            if pathE.get(startQ[i]) != None:
+                                sPath = pathE.get(startQ[i])
+                            for q in range(len(sPath) - 1, 0, -1):
+                                tPath.append(perm_inverse(sPath[q]))
+                            return tPath
                 if adjList[j] not in visit:
                     heapq.heappush(visit, adjList[j])
                     heapq.heappush(nextQ, adjList[j])
-                    tPath = []
-                    if path.get(startQ[i]) != None:
-                        tPath = path.get(startQ[i])
-                    tPath.append(moves[j])
-                    nuPath = {adjList[j]: tPath}
-                    path.update(nuPath)
-
+                    if fromStart:
+                        tPath = []
+                        if path.get(startQ[i]) != None:
+                            tPath = path.get(startQ[i])
+                        tPath.append(moves[j])
+                        nuPath = {adjList[j]: tPath}
+                        path.update(nuPath)
+                    else:
+                        tPath = []
+                        if path.get(startQ[i]) != None:
+                            tPath = pathE.get(startQ[i])
+                        tPath.append(moves[j])
+                        nuPath = {adjList[j]: tPath}
+                        pathE.update(nuPath)
 
         if(len(nextQ) < len(endQ)):
             startQ = nextQ
         else:
             startQ = endQ
             endQ = nextQ
+            if fromStart:
+                fromStart = False
+            else:
+                fromStart = True
 
     return
 
