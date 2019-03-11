@@ -2,7 +2,6 @@ from rubik import perm_apply, perm_inverse
 import rubik
 import heapq
 
-
 def shortest_path(start, end):
     """
     Using 2-way BFS, finds the shortest path from start_position to
@@ -40,26 +39,34 @@ def shortest_path(start, end):
         nextQ = []
 
         depth += 1
-        if depth >= 14: #if we go beyond what is the shortest path, terminate
+        if depth >= 14:  # if we go beyond what is the shortest path, terminate
             break
 
+
+        # While startQ exists and has values that a frontier can be made from the loop will continue to generate the
+        # frontier until a match is found or the end of the list is reached
+        # Termination: The loop will terminate when either a match is found signalling that the shortest path has
+        # been found or it reaches the end of the startQ meaning that the next frontier has been found
         for i in range(len(startQ)):
 
-            adjList = genAdj(startQ[i])
+            adjList = genAdj(startQ[i])#generates the frontier by calculating all adjacent moves
 
             #j - 0=F, 1=Fi, 2=L, 3=Li, 4=U, 5=Ui
             #j is the specific move done to the cube
+            #While there exists a node j in the adjList we will compare it to the frontier on the other side
+            #If a match is found we return the shortest path other wise we add the node to the visisted heap
+            #and add its path to the dictionary
             for j in range(len(adjList)):
-                # if adjList[j] in endQ:
-                #     tPath = []
-                #     if path.get(startQ[i]) != None:
-                #         tPath = path.get(adjList[j])
-                #     tPath.append(moves[j])
-                #     return tPath
+                #While an element k exists in the endQ frontier we will compare every element k with every element
+                #j from the adjList to see if an equality exists, if one exists then a match and by extension a shortest
+                #path has been found.
+                #The loop will terminate when the end frontier has been completly checked meaning that element j is not
+                # on both the start and ending frontiers
                 for k in range(len(endQ)):
-                    #merging
+                    #This is where we merge the list depending on if we are currently adding from the start side
+                    #or the end side
                     if adjList[j] == endQ[k]:
-                        if fromStart:
+                        if fromStart:#If we are oriented from the start
                             tPath = []
                             if path.get(startQ[i]) != None:
                                 tPath = path.get(startQ[i])
@@ -68,45 +75,45 @@ def shortest_path(start, end):
                             if pathE.get(endQ[k]) != None:
                                 sPath = pathE.get(endQ[k])
                             q = len(sPath) - 1
+                            #Loops through the path oriented on the end in reverse appending it to the working path
                             while(q >= 0):
-                                # tPath.append(perm_inverse(sPath[q]))
                                 tPath.append(perm_inverse(sPath[q]))
                                 q -= 1
                             return tPath
-                        else:
+                        else: #If we are oriented from the end side
                             tPath = []
                             if path.get(endQ[k]) != None:
                                 tPath = path.get(endQ[k])
-                            # move = applyMove(j, startQ[i])
-                            # tPath.append(move)
                             tPath.append(perm_inverse(moves[j]))
                             sPath = []
                             if pathE.get(startQ[i]) != None:
                                 sPath = pathE.get(startQ[i])
                             q = len(sPath) - 1
+                            # Loops through the path oriented on the end in reverse appending it to the working path
                             while q >= 0:
                                 tPath.append(perm_inverse(sPath[q]))
                                 q -= 1
                             return tPath
-                #increasing path
+                #This will check if we have already visited the current node and if we did not, we add its path to the
+                #corresonding dictionary
                 if adjList[j] not in visit:
-                    heapq.heappush(visit, adjList[j])
-                    heapq.heappush(nextQ, adjList[j])
-                    if fromStart:
+                    heapq.heappush(visit, adjList[j]) #add to visit
+                    heapq.heappush(nextQ, adjList[j]) #add to the next frontier
+                    if fromStart: #If we are oriendted from the start
                         tPath = []
                         if path.get(startQ[i]) != None:
                             tPath = path.get(startQ[i])
                         tPath.append(moves[j])
                         nuPath = {adjList[j]: tPath}
                         path.update(nuPath)
-                    else:
+                    else: #If we are oriendinted from the end/target
                         tPath = []
                         if path.get(startQ[i]) != None:
                             tPath = pathE.get(startQ[i])
                         tPath.append(moves[j])
                         nuPath = {adjList[j]: tPath}
                         pathE.update(nuPath)
-
+        #This will flip the algorithm to either fuction from the start of the graph or the end
         if(len(nextQ) < len(endQ)):
             startQ = nextQ
         else:
@@ -119,31 +126,6 @@ def shortest_path(start, end):
 
     return
 
-def applyMove(move, pos):
-    moves = [rubik.F, rubik.Fi, rubik.L, rubik.Li, rubik.U, rubik.Ui]
-    return perm_apply(moves[move], pos)
-
-
-
-
-# #
-# def bfs(s, e, adjS, adjE):
-#     depth = {s: 0}
-#     parent = {s: None}
-#     i = 1
-#     frontier = [s]
-#     while frontier:
-#         next = []
-#         for u in frontier:
-#             for v in adj[u]:
-#                 if v not in depth:
-#                     depth[v] = i
-#                     parent[v] = u
-#                     next.append(v)
-#         frontier = next
-#         i += 1
-#     return parent
-
 def genAdj(start):
     list = []
 
@@ -155,4 +137,3 @@ def genAdj(start):
     list.append(perm_apply(rubik.Ui, start))
 
     return list
-
